@@ -1,12 +1,19 @@
-<template>
-  <div class="common-layout">
+<template >
+  <div class="common-layout" v-loading="loading">
+    <div class="block">
+      <el-carousel trigger="click" height="150px">
+        <el-carousel-item v-for="item in title" :key="item">
+          <h3 class="small">{{ item }}</h3>
+        </el-carousel-item>
+      </el-carousel>
+    </div>
     <el-container>
       <el-header style="padding-top: 20px;  text-align: center;">
         <div>
           <el-input
             v-model="input"
             @keyup.enter="onAddItem(input)"
-            placeholder="Please input"
+            placeholder="输入您今日的任务"
             style="width:80%;"
           />
           <el-button type="primary" @click="onAddItem(input)" plain style="width:20%;">添 加</el-button>
@@ -37,7 +44,7 @@
                 size="large"
                 label
                 style=" margin-left:10px; "
-              >已完成{{ count }}条 / 共{{ state.todosData.length }}条</el-checkbox>
+              >完成 {{ count }} 条 / 共 {{ state.todosData.length }} 条</el-checkbox>
             </el-card>
           </el-col>
         </el-row>
@@ -51,6 +58,11 @@
           style="width:100%;"
         >一 键 清 空 选 中</el-button>
       </el-footer>
+      <el-row style="width:90%;margin: 0 auto;text-align:center">
+        <el-col >
+          <el-card shadow="hover">Email：s208082474@Gmail.com</el-card>
+        </el-col>
+      </el-row>
     </el-container>
   </div>
 </template>
@@ -59,10 +71,18 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { User } from './types/todo'
 import { saveTodo, readTodo } from './utils/localStorage'
+import { ElNotification } from 'element-plus'
 const input = ref('')
+const loading = ref(true)
 
 
+const title = [
+  '暂无公告',
+  '广告位招租',
+  '广告位招租',
+  '广告位招租',
 
+]
 //添加多选概况函数
 const onAddItem = (val: string) => {
   if (val !== "") {
@@ -73,8 +93,17 @@ const onAddItem = (val: string) => {
       isCompeted: false,
     })
     input.value = ""
+    ElNotification({
+      title: 'Success',
+      message: '今日任务添加成功~',
+      type: 'success',
+    })
   } else {
-    alert("什么也没有添加哟~")
+    ElNotification({
+      title: 'Warning',
+      message: '什么也没有添加哟~',
+      type: 'warning',
+    })
   }
 
 }
@@ -111,6 +140,11 @@ const ischeckAll = computed({
 //清理选中的数据
 const deleoverDatas = () => {
   state.todosData = reactive(state.todosData.filter(data => !data.isCompeted))
+  ElNotification({
+    title: 'Success',
+    message: '任务清理成功~',
+    type: 'success',
+  })
 }
 
 const state = reactive({
@@ -120,6 +154,7 @@ const state = reactive({
 onMounted(() => {
   setTimeout(() => {
     state.todosData = readTodo()
+    loading.value = false
   }, 500);
 })
 
@@ -133,7 +168,7 @@ watch(() => state.todosData, saveTodo, { deep: true })
 
 <style>
 body {
-  width: 90%;
+  width: 60%;
   margin: 0 auto;
 }
 .li {
@@ -146,5 +181,26 @@ body {
 }
 .li:hover {
   background-color: #e4e7ed;
+}
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 150px;
+  margin: 0;
+  text-align: center;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+@media only screen and (max-width: 720px) {
+  body {
+    width: 100%;
+  }
 }
 </style>
