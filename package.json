@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/node": "^17.0.23",
     "@types/vue-router": "^2.0.0",
+    "axios": "^0.27.2",
     "element-plus": "^2.1.5",
     "type-fest": "^2.12.1",
     "vue": "^3.2.25"

@@ -1,9 +1,9 @@
 <template >
   <div class="common-layout" v-loading="loading">
     <div class="block">
-      <el-carousel trigger="click" height="150px">
-        <el-carousel-item v-for="item in title" :key="item">
-          <h3 class="small">{{ item }}</h3>
+      <el-carousel trigger="click" height="150px" v-if="sliderimg.length > 0">
+        <el-carousel-item v-for="item in sliderimg" :key="item.id">
+        <img :src="item.imageUrl" alt="" style="width: 100%;"> 
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -68,10 +68,24 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeMount, onMounted, reactive, ref, watch } from 'vue'
 import { User } from './types/todo'
 import { saveTodo, readTodo } from './utils/localStorage'
 import { ElNotification } from 'element-plus'
+import { getSliders } from './api/slider.js'
+import console from 'console'
+const sliderimg = ref([])
+onBeforeMount(()=>{
+  //轮播图api
+  // console.log('ok')
+  getSliders().then(res=>{
+    sliderimg.value = res.data.list
+// alert(res.data.list[0].imageUrl)
+//     console.log(res);
+  })
+})
+
+
 const input = ref('')
 const loading = ref(true)
 
@@ -152,10 +166,12 @@ const state = reactive({
 })
 
 onMounted(() => {
+  
   setTimeout(() => {
     state.todosData = readTodo()
     loading.value = false
   }, 500);
+
 })
 
 
