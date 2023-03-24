@@ -5,6 +5,9 @@ import ElementPlus from "vite-plugin-element-plus";
 export default defineConfig({
   plugins: [vue(), ElementPlus({})],
   server: {
+    // ← ← ← ← ← ←
+    host: '0.0.0.0'	// ← 新增内容 ←
+
     // proxy: {
     //   "/api": "http://testapi.xuexiluxian.cn",
     // },
