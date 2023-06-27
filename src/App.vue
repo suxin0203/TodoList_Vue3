@@ -8,7 +8,7 @@
           v-if="sliderImgList.length > 0"
         >
           <el-carousel-item v-for="item in sliderImgList" :key="item.id">
-            <el-image :src="item.href" fit="cover" style="width: 100%">
+            <el-image :src="item.newhref" fit="cover" style="width: 100%">
             </el-image>
           </el-carousel-item>
         </el-carousel>
@@ -105,12 +105,8 @@
             style="width: 100%"
             >一 键 清 空 选 中</el-button
           >
-          <hr>
-                    <el-button
-            type="success"
-            plain
-            size="large"
-            style="width: 100%"
+          <hr />
+          <el-button type="success" plain size="large" style="width: 100%"
             >一 键 导 出</el-button
           >
         </el-footer>
@@ -138,6 +134,7 @@ interface SliderItem {
   url: string;
   isShow: boolean;
   href: string;
+  newhref: string;
 }
 
 const sliderImgList = ref<Array<SliderItem>>([]);
