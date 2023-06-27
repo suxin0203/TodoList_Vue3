@@ -1,10 +1,14 @@
 <template>
   <div class="main">
     <div class="common-layout" v-loading="loading">
-      <div class="block" v-if="isopen">
-        <el-carousel trigger="click" height="123px" v-if="sliderimg.length > 0">
-          <el-carousel-item v-for="item in sliderimg" :key="item.id">
-            <el-image :src="item.href" fit="cover" style="width: 100%;">
+      <div class="block" v-if="changeImgStatus">
+        <el-carousel
+          trigger="click"
+          height="123px"
+          v-if="sliderImgList.length > 0"
+        >
+          <el-carousel-item v-for="item in sliderImgList" :key="item.id">
+            <el-image :src="item.href" fit="cover" style="width: 100%">
             </el-image>
           </el-carousel-item>
         </el-carousel>
@@ -101,10 +105,18 @@
             style="width: 100%"
             >一 键 清 空 选 中</el-button
           >
+          <hr>
+                    <el-button
+            type="success"
+            plain
+            size="large"
+            style="width: 100%"
+            >一 键 导 出</el-button
+          >
         </el-footer>
         <!-- <el-row style="width: 90%; margin: 0 auto; text-align: center">
           <el-col>
-            <el-card shadow="hover" @click="isopen = !isopen"
+            <el-card shadow="hover" @click="changeImgStatus = !changeImgStatus"
               >关闭轮播图</el-card
             >
           </el-col>
@@ -120,33 +132,55 @@ import { saveTodo, readTodo } from "./utils/localStorage";
 import { getSliders } from "./api/slider.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Delete } from "@element-plus/icons-vue";
-const sliderimg = ref([]);
-const input = ref("");
-const loading = ref(true);
-const isopen = ref(false);
 
+interface SliderItem {
+  id: number;
+  url: string;
+  isShow: boolean;
+  href: string;
+}
 
+const sliderImgList = ref<Array<SliderItem>>([]);
+const input = ref<string>("");
+const loading = ref<boolean>(true);
+const changeImgStatus = ref<boolean>(false);
 
+const getCurrentTime = () => {
+  const now = new Date();
+  const date = `${now.getFullYear()}-${(now.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")} ${now
+    .getHours()
+    .toString()
+    .padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now
+    .getSeconds()
+    .toString()
+    .padStart(2, "0")}`;
+  return date;
+};
 
 onBeforeMount(() => {
   //轮播图api
-  // console.log('ok')
   getSliders().then((res) => {
-    isopen.value = true;
-    sliderimg.value = res.data.slice(0, 4);
-    // alert(res.data.list[0].imageUrl)
-    console.log(res);
+    changeImgStatus.value = true;
+    sliderImgList.value = res.data.slice(0, 4);
+    // console.log(res);
   });
 });
 
-const title = ["暂无公告", "广告位招租", "广告位招租", "广告位招租"];
+const title: Array<string> = [
+  "暂-无-公-告",
+  "广告位招租1",
+  "广告位招租2",
+  "广告位招租3",
+];
 //添加多选概况函数
-const onAddItem = (val: string) => {
-  if (val !== "") {
+const onAddItem = (title: string) => {
+  if (title !== "") {
     state.todosData.push({
       id: state.todosData.length + 1,
-      date: "05:03",
-      title: val,
+      title,
+      date: getCurrentTime,
       isCompeted: false,
     });
     input.value = "";
@@ -228,7 +262,7 @@ onMounted(() => {
     state.todosData = readTodo();
     loading.value = false;
   }, 500);
-    ElMessage('此广告位招租');
+  ElMessage("此广告位招租");
 });
 
 //监视
